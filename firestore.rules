@@ -1,0 +1,106 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Entity Validations
+    function isValidBoardPost(data) {
+      return data.keys().hasAll(['title', 'content', 'userId', 'userName', 'createdAt'])
+        && data.keys().size() <= 10
+        && data.title is string && data.title.size() <= 200
+        && data.content is string && data.content.size() <= 4000
+        && data.userId == request.auth.uid
+        && data.userName is string && data.userName.size() <= 100
+        && data.createdAt is string;
+    }
+
+    function isValidRegistration(data) {
+      return data.keys().hasAll(['userId', 'name', 'phone', 'birthDate', 'address', 'motive', 'createdAt', 'status'])
+        && data.keys().size() == 8
+        && data.userId == request.auth.uid
+        && data.name is string && data.name.size() <= 100
+        && data.phone is string && data.phone.size() <= 50
+        && data.birthDate is string && data.birthDate.size() <= 20
+        && data.address is string && data.address.size() <= 300
+        && data.motive is string && data.motive.size() <= 1000
+        && data.createdAt is string
+        && data.status is string;
+    }
+
+    function isValidInquiry(data) {
+      return data.keys().hasAll(['userId', 'title', 'content', 'createdAt', 'status'])
+        && data.keys().size() <= 7
+        && data.title is string && data.title.size() <= 200
+        && data.content is string && data.content.size() <= 2000
+        && data.createdAt is string
+        && data.status is string;
+    }
+
+    function isValidMediaItem(data) {
+      return data.keys().hasAll(['category', 'title', 'date', 'duration', 'youtubeId', 'createdAt'])
+        && data.keys().size() <= 11
+        && data.category is string && (data.category == 'sermon' || data.category == 'praise')
+        && data.title is string && data.title.size() <= 200
+        && data.date is string && data.date.size() <= 100
+        && data.duration is string && data.duration.size() <= 20
+        && data.youtubeId is string && data.youtubeId.size() <= 50
+        && data.createdAt is string;
+    }
+
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == '5qud2dj11@gmail.com';
+    }
+
+    // Collection matches
+    match /board_posts/{postId} {
+      allow get, list: if true; // Public read access
+      allow create: if isAdmin() && isValidBoardPost(request.resource.data);
+      allow update: if isAdmin() && isValidBoardPost(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /registrations/{registrationId} {
+      allow get, list: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && isValidRegistration(request.resource.data);
+      allow update: if request.auth != null && resource.data.userId == request.auth.uid && isValidRegistration(request.resource.data);
+      allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+
+    match /inquiries/{inquiryId} {
+      allow get, list: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if isValidInquiry(request.resource.data) && (request.resource.data.userId == 'anonymous' || (request.auth != null && request.resource.data.userId == request.auth.uid));
+      allow update: if request.auth != null && resource.data.userId == request.auth.uid && isValidInquiry(request.resource.data);
+      allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+
+    match /media_items/{mediaId} {
+      allow get, list: if true;
+      allow create: if isAdmin() && isValidMediaItem(request.resource.data);
+      allow update: if isAdmin() && isValidMediaItem(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create, update: if isOwner(userId) || isAdmin();
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+  }
+}

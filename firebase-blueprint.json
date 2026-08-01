@@ -1,0 +1,205 @@
+{
+  "entities": {
+    "board_post": {
+      "title": "BoardPost",
+      "description": "Posts created by members on the Five Loaves & Two Fishes board",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the board post"
+        },
+        "content": {
+          "type": "string",
+          "description": "Detailed body text of the board post"
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of the creator of the post"
+        },
+        "userName": {
+          "type": "string",
+          "description": "Display name of the author"
+        },
+        "userPhoto": {
+          "type": "string",
+          "description": "Optional profile image URL of the author"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of when the post was written"
+        }
+      },
+      "required": ["title", "content", "userId", "userName", "createdAt"]
+    },
+    "registration": {
+      "title": "Registration",
+      "description": "New member registration form details",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the user who registered"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the registrant"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "Date of birth"
+        },
+        "address": {
+          "type": "string",
+          "description": "Residential address"
+        },
+        "motive": {
+          "type": "string",
+          "description": "Motive/reason for visiting"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of registration (e.g. submitted, reviewed, completed)"
+        }
+      },
+      "required": ["userId", "name", "phone", "birthDate", "address", "motive", "createdAt", "status"]
+    },
+    "inquiry": {
+      "title": "Inquiry",
+      "description": "General inquiries or questions to the church",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the user, or 'anonymous'"
+        },
+        "title": {
+          "type": "string",
+          "description": "Inquiry title"
+        },
+        "content": {
+          "type": "string",
+          "description": "Inquiry content"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Optional contact number"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp"
+        },
+        "status": {
+          "type": "string",
+          "description": "Inquiry handling status"
+        },
+        "answer": {
+          "type": "string",
+          "description": "Response from the church admin"
+        }
+      },
+      "required": ["userId", "title", "content", "createdAt", "status"]
+    },
+    "media_item": {
+      "title": "MediaItem",
+      "description": "Sermon or praise video logs",
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": ["sermon", "praise"]
+        },
+        "title": {
+          "type": "string"
+        },
+        "speaker": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "youtubeId": {
+          "type": "string"
+        },
+        "thumbnailUrl": {
+          "type": "string"
+        },
+        "scripture": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "required": ["category", "title", "date", "duration", "youtubeId", "createdAt"]
+    },
+    "user": {
+      "title": "User",
+      "description": "User profile containing member board unlock status and settings",
+      "type": "object",
+      "properties": {
+        "isMembersUnlocked": {
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "unlockedAt": {
+          "type": "string"
+        },
+        "failedAttempts": {
+          "type": "integer"
+        },
+        "lockoutUntil": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "firestore": {
+    "board_posts/{postId}": {
+      "schema": {
+        "$ref": "#/entities/board_post"
+      },
+      "description": "Collection of board posts for Five Loaves & Two Fishes board"
+    },
+    "registrations/{registrationId}": {
+      "schema": {
+        "$ref": "#/entities/registration"
+      },
+      "description": "Collection of new member registrations"
+    },
+    "inquiries/{inquiryId}": {
+      "schema": {
+        "$ref": "#/entities/inquiry"
+      },
+      "description": "Collection of general inquiries"
+    },
+    "media_items/{mediaId}": {
+      "schema": {
+        "$ref": "#/entities/media_item"
+      },
+      "description": "Collection of sermon and praise videos"
+    },
+    "users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/user"
+      },
+      "description": "Collection of user unlock statuses and preferences"
+    }
+  }
+}

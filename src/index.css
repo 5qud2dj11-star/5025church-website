@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Nunito:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-warm-white: #F8FCFA;
+  --color-mute-blue: #38C1A5;
+  --color-mute-lavender: #4FD1C5;
+  --color-dark-slate: #243E3B;
+  
+  --font-sans: "Nunito", "Gowun Dodum", system-ui, -apple-system, sans-serif;
+  --font-serif: "Gowun Batang", "Gowun Dodum", serif;
+  --font-display: "Nunito", "Gowun Dodum", sans-serif;
+}
+
+body {
+  background-color: #F8FCFA;
+  color: #243E3B;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* 스크롤바 커스터마이징 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F8FCFA;
+}
+::-webkit-scrollbar-thumb {
+  background: #A8E8D9;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #38C1A5;
+}
