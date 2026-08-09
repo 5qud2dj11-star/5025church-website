@@ -55,15 +55,7 @@ export const bulletinNews: BulletinNews[] = [
     id: "2026-08-09",
     title: "2026년 8월 9일 주일 주보 (제2026-34호)",
     date: "2026-08-09",
-    scripture: "역대상 4장 9-10절",
-    sermonTitle: "야베스의 기도를 배우라",
-    preacher: "송영의 목사",
-    prayer: "선혜자 권사",
-    content: "본문: 역대상 4장 9-10절\n설교: 야베스의 기도를 배우라 (송영의 목사)\n기도: 선혜자 권사",
-    images: [
-      "KakaoTalk_Photo_2026-08-09-19-55-49 001.jpeg",
-      "KakaoTalk_Photo_2026-08-09-19-55-49 002.jpeg"
-    ]
+    content: "본문: 역대상 4장 9-10절\n설교: 야베스의 기도를 배우라 (송영의 목사)\n기도: 선혜자 권사"
   }
 ];
 
