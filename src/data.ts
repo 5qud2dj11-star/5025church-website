@@ -60,8 +60,8 @@ export const bulletinNews: BulletinNews[] = [
     preacher: "송영의 목사",
     prayer: "선혜자 권사",
     images: [
-      "/KakaoTalk_Photo_2026-08-09-19-55-49 001.jpeg",
-      "/KakaoTalk_Photo_2026-08-09-19-55-49 002.jpeg"
+      "KakaoTalk_Photo_2026-08-09-19-55-49 001.jpeg",
+      "KakaoTalk_Photo_2026-08-09-19-55-49 002.jpeg"
     ]
   }
 ];
