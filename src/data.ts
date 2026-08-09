@@ -66,8 +66,8 @@ export const initialBoardPosts: BoardPost[] = [
     type: 'bulletin',
     content: '2026년 8월 9일 주일 주보입니다.',
   images: [
-      '/KakaoTalk_Photo_2026-08-09-19-55-49%20001.jpeg',
-      '/KakaoTalk_Photo_2026-08-09-19-55-49%20002.jpeg'
+      '/260809-1.jpeg',
+      '/260809-2.jpeg'
     ],
   }
 ];
