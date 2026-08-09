@@ -59,12 +59,14 @@ export const bulletinNews: BulletinNews[] = [
     sermonTitle: "야베스의 기도를 배우라",
     preacher: "송영의 목사",
     prayer: "선혜자 권사",
+    content: "본문: 역대상 4장 9-10절\n설교: 야베스의 기도를 배우라 (송영의 목사)\n기도: 선혜자 권사",
     images: [
       "KakaoTalk_Photo_2026-08-09-19-55-49 001.jpeg",
       "KakaoTalk_Photo_2026-08-09-19-55-49 002.jpeg"
     ]
   }
 ];
+
 
 // 초기 오병이어 소식 & 교인 게시판 데이터
 export const initialBoardPosts: BoardPost[] = [];
