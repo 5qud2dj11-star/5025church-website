@@ -3,29 +3,19 @@ import { WorshipService, BulletinNews, BoardPost } from './types';
 // 예배 안내 데이터
 export const worshipServices: WorshipService[] = [
   {
-    name: "주일 대예배 (1부)",
-    time: "오전 09:00",
-    location: "은혜홀 (본당 2층)"
-  },
-  {
-    name: "주일 대예배 (2부)",
+    name: "주일 대예배",
     time: "오전 11:00",
     location: "은혜홀 (본당 2층)"
   },
   {
     name: "주일 학교 (유·초등부)",
     time: "오전 11:00",
-    location: "비전홀 (3층)"
+    location: "비전홀 (2층)"
   },
   {
-    name: "주일 청소년부 예배",
+    name: "목장 예배",
     time: "오후 01:30",
-    location: "비전홀 (3층)"
-  },
-  {
-    name: "주일 청년부 예배",
-    time: "오후 01:30",
-    location: "은혜홀 (본당 2층)"
+    location: "각 목장"
   },
   {
     name: "목요 찬양 예배",
