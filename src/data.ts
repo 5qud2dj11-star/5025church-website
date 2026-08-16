@@ -69,5 +69,21 @@ export const initialBoardPosts: BoardPost[] = [
       '/260809-1.jpeg',
       '/260809-2.jpeg'
     ],
-  }
+  },
+  {
+    id: 'bulletin-20260816',
+    title: '2026년 8월 16일 주일 주보 (제2026-3호)',
+    bulletinDate: '2026년 8월 16일 주일',
+    scripture: '창세기 40장 9-15절',
+    prayer: '천현미 집사',
+    userName: '오병이어교회',
+    userId: 'admin',
+    createdAt: '2026-08-16T00:00:00.000Z',
+    type: 'bulletin',
+    content: '2026년 8월 16일 주일 주보입니다.',
+  images: [
+      '/2026년 8월 16일 주보 1.pdf',
+      '/2026년 8월 16일 주보 2.pdf'
+    ],
+  } 
 ];
