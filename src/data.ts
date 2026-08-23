@@ -56,7 +56,7 @@ export const bulletinNews: BulletinNews[] = [];
 export const initialBoardPosts: BoardPost[] = [
    {
      id: 'bulletin-20260816',
-    title: '2026년 8월 23일 주일 주보 (제2026-4호)',
+    title: '2026년 8월 23일 주일 주보 (제2026-36호)',
     bulletinDate: '2026년 8월 23일 주일',
     scripture: '다니엘 1장 1-7절',
     prayer: '김혜지 집사',
@@ -72,7 +72,7 @@ export const initialBoardPosts: BoardPost[] = [
   },
   {
      id: 'bulletin-20260816',
-    title: '2026년 8월 16일 주일 주보 (제2026-3호)',
+    title: '2026년 8월 16일 주일 주보 (제2026-35호)',
     bulletinDate: '2026년 8월 16일 주일',
     scripture: '창세기 40장 9-15절',
     prayer: '천현미 집사',
@@ -88,7 +88,7 @@ export const initialBoardPosts: BoardPost[] = [
   },
   {   
     id: 'bulletin-20260809',
-    title: '2026년 8월 9일 주일 주보 (제2026-2호)',
+    title: '2026년 8월 9일 주일 주보 (제2026-34호)',
     bulletinDate: '2026년 8월 9일 주일',
     scripture: '역대상 4장 9-10절',
     prayer: '선혜자 권사',
