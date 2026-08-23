@@ -54,6 +54,22 @@ export const bulletinNews: BulletinNews[] = [];
 
 // 초기 오병이어 소식 & 교인 게시판 데이터
 export const initialBoardPosts: BoardPost[] = [
+   {
+     id: 'bulletin-20260816',
+    title: '2026년 8월 23일 주일 주보 (제2026-4호)',
+    bulletinDate: '2026년 8월 23일 주일',
+    scripture: '다니엘 1장 1-7절',
+    prayer: '김혜지 집사',
+    userName: '오병이어교회',
+    userId: 'admin',
+    createdAt: '2026-08-23T00:00:00.000Z',
+    type: 'bulletin',
+    content: '2026년 8월 23일 주일 주보입니다.',
+  images: [
+      '',
+      ''
+    ],
+  },
   {
      id: 'bulletin-20260816',
     title: '2026년 8월 16일 주일 주보 (제2026-3호)',
