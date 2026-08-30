@@ -46,9 +46,21 @@ export interface MediaItem {
   thumbnailUrl: string;
   scripture?: string;
 }
+// 48번째 줄 } 아래에 추가하세요
 
-// 말씀 찬양 / 미디어 영상
-export const MEDIA_DATA: MediaItem[] = [] = [];
+export const mediaItems: MediaItem[] = [
+  {
+    id: "20260816-sermon",
+    category: "sermon",
+    title: "원주 오병이어교회 [주일예배]",
+    speaker: "정일혁 목사",
+    date: "2026.08.16",
+    duration: "1:18:50",
+    youtubeId: "oyewlV5DlhQ",
+    thumbnailUrl: "https://img.youtube.com/vi/oyewlV5DlhQ/hqdefault.jpg",
+    scripture: "창세기 40장 9-15절"
+  }
+];
 
 // 교회 소식 / 금주 주보 데이터
 export const bulletinNews: BulletinNews[] = [];
