@@ -47,7 +47,7 @@ export interface MediaItem {
   scripture?: string;
 }
 
-export const MEDIA_DATA: MediaItem[] = [
+
   {
     id: "20260816-sermon",
     category: "sermon",
