@@ -131,6 +131,15 @@ export const initialBoardPosts: BoardPost[] = [
       '/260809-2.jpeg'
     ],
   },
+   {
+    id: 'news-20260823-2',
+    title: '[공지] 9월 10일 목요 찬양 기도회 안내',
+    content: '9월 10일 목요 찬양 기도회는 \'방황하는 친구에게\'(대표 조환곤) 팀이 오십니다 성도 여러분들의 많은 참여 바랍니다.',
+    userName: '오병이어교회',
+    userId: 'admin',
+    createdAt: '2026-08-30T10:40:00.000Z',
+    type: 'news',
+  },
   {
     id: 'news-20260823-1',
     title: '[안내] 다음 주 주일예배 설교 안내 (송무헌 선교사님)',
