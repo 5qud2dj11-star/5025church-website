@@ -79,8 +79,8 @@ export const initialBoardPosts: BoardPost[] = [
     type: 'bulletin',
     content: '2026년 8월 30일 주일 주보입니다.',
   images: [
-      '/',
-      '/'
+      '/260830-1.jpeg',
+      '/260830-2.jpeg'
     ],
   },
   {
