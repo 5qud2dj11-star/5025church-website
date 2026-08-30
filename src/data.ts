@@ -57,7 +57,7 @@ export const mediaItems: MediaItem[] = [
     date: "2026.08.16",
     duration: "1:18:50",
     youtubeId: "oyewlV5DlhQ",
-    thumbnailUrl: "https://img.youtube.com/vi/oyewlV5DlhQ/hqdefault.jpg",
+    thumbnailUrl: "https://www.youtube.com/watch?v=oyewIV5DlhQ&t=2597s",
     scripture: "창세기 40장 9-15절"
   }
 ];
