@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { db, auth } from '../firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { collection, addDoc, getDocs, query, orderBy } from 'firebase/firestore';
@@ -7,7 +7,6 @@ import {
   Play, 
   Calendar, 
   User as UserIcon, 
-  Clock, 
   BookOpen, 
   X, 
   ExternalLink, 
@@ -27,6 +26,95 @@ interface MediaGalleryProps {
   isPanel?: boolean;
 }
 
+// 날짜 파싱 도우미 (다양한 날짜 수식 대응)
+const parseDateStr = (dateStr: string): number => {
+  if (!dateStr) return 0;
+  
+  // 1) "YYYY년 MM월 DD일"
+  const matchKr = dateStr.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
+  if (matchKr) {
+    return new Date(parseInt(matchKr[1]), parseInt(matchKr[2]) - 1, parseInt(matchKr[3])).getTime();
+  }
+  
+  // 2) Standard Date string / ISO
+  const parsed = Date.parse(dateStr);
+  if (!isNaN(parsed)) return parsed;
+
+  return 0;
+};
+
+// 개별 비디오 카드 컴포넌트 (외부 분리)
+const VideoCard = ({ item, onSelect }: { item: MediaItem; onSelect: (item: MediaItem) => void }) => (
+  <div
+    id={`media-card-${item.id}`}
+    onClick={() => onSelect(item)}
+    className="bg-white border border-[#2F3E46]/10 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transform hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 cursor-pointer group flex flex-col justify-between"
+  >
+    {/* 썸네일 영역 */}
+    <div className={`relative aspect-video w-full overflow-hidden flex items-center justify-center transition-all duration-300 ${
+      item.category === 'sermon'
+        ? 'bg-gradient-to-br from-[#38B2AC]/20 via-[#38B2AC]/10 to-[#F0FDF4]'
+        : 'bg-gradient-to-br from-[#4FD1C5]/20 via-[#4FD1C5]/10 to-[#F0FDF4]'
+    }`}>
+      <div className="absolute -top-10 -left-10 w-32 h-32 rounded-full bg-white/30 blur-xl"></div>
+      <div className="absolute -bottom-10 -right-10 w-36 h-36 rounded-full bg-[#38B2AC]/5 blur-2xl"></div>
+
+      {/* 재생 버튼 */}
+      <div className="absolute inset-0 flex items-center justify-center z-10">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 text-[#38B2AC] shadow-xs flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 border border-[#BBF7D0]">
+          <Play size={16} className="ml-0.5 sm:ml-1 fill-[#38B2AC] text-[#38B2AC]" />
+        </div>
+      </div>
+
+      {/* 영상 재생 시간 */}
+      <span className="absolute bottom-2 right-2 sm:bottom-2.5 sm:right-2.5 text-[10px] sm:text-xs text-white bg-[#234E52]/85 font-mono font-medium px-2 py-0.5 rounded z-10">
+        {item.duration}
+      </span>
+
+      {/* 카테고리 태그 */}
+      <span className={`absolute top-2 left-2 sm:top-2.5 sm:left-2.5 text-[10px] sm:text-xs text-white font-semibold px-2 sm:px-2.5 py-0.5 rounded-lg ${
+        item.category === 'sermon' ? 'bg-[#38B2AC]' : 'bg-[#319795]'
+      }`}>
+        {item.category === 'sermon' ? '주일 설교' : '찬양 찬송'}
+      </span>
+    </div>
+
+    {/* 정보 영역 */}
+    <div className="p-3.5 sm:p-5 flex-1 flex flex-col justify-between space-y-2.5 sm:space-y-3">
+      <div>
+        <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-[#234E52]/60 mb-1">
+          <Calendar size={12} />
+          <span>{item.date}</span>
+        </div>
+        <h4 className="font-serif font-bold text-sm sm:text-lg text-[#234E52] leading-snug group-hover:text-[#38B2AC] transition-colors line-clamp-2">
+          {item.title}
+        </h4>
+        {item.scripture && (
+          <div className="flex items-center gap-1 text-[10px] sm:text-xs text-[#234E52] font-serif mt-1.5 sm:mt-2 bg-[#DCFCE7] px-2 py-0.5 rounded-md w-fit break-all">
+            <BookOpen size={11} className="shrink-0" />
+            <span className="line-clamp-1">{item.scripture}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-[#BBF7D0]">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#DCFCE7] text-[#38B2AC] flex items-center justify-center shrink-0">
+            <UserIcon size={12} />
+          </div>
+          <span className="text-[10px] sm:text-xs font-semibold text-[#234E52] truncate max-w-[110px] sm:max-w-none">
+            {item.speaker}
+          </span>
+        </div>
+        <span className="text-[10px] sm:text-xs text-[#38B2AC] font-semibold flex items-center gap-0.5 group-hover:underline shrink-0">
+          영상 보기
+          <ExternalLink size={10} />
+        </span>
+      </div>
+    </div>
+  </div>
+);
+
 export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalleryProps) {
   const [selectedVideo, setSelectedVideo] = useState<MediaItem | null>(null);
   const [dbVideos, setDbVideos] = useState<MediaItem[]>([]);
@@ -34,22 +122,11 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  // 영상 저장소 서브 뷰 상태
   const [showStorage, setShowStorage] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'sermon' | 'praise'>('all');
   const [mediaPage, setMediaPage] = useState<number>(1);
 
-  const scrollToMediaTop = () => {
-    const element = document.getElementById('interactive-panel');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.scrollTo({ top: 150, behavior: 'smooth' });
-    }
-  };
-
-  // 영상 등록 폼 상태
   const [showAddModal, setShowAddModal] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
   const [newCategory, setNewCategory] = useState<'sermon' | 'praise'>('sermon');
@@ -60,16 +137,15 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
   const [newYoutubeId, setNewYoutubeId] = useState('');
   const [newScripture, setNewScripture] = useState('');
 
-  // 날짜 파싱 도우미 (예: "2026년 7월 19일 주일설교" -> 타임스탬프)
-  const parseDateStr = (dateStr: string): number => {
-    const match = dateStr.match(/(\d+)년\s*(\d+)월\s*(\d+)일/);
-    if (match) {
-      return new Date(parseInt(match[1]), parseInt(match[2]) - 1, parseInt(match[3])).getTime();
+  const scrollToMediaTop = () => {
+    const element = document.getElementById('interactive-panel');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo({ top: 150, behavior: 'smooth' });
     }
-    return 0;
   };
 
-  // 사용자 상태 변경 감지
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (usr) => {
       setCurrentUser(usr);
@@ -77,8 +153,7 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
     return () => unsubscribe();
   }, []);
 
-  // Firestore에서 비디오 리스트 로딩
-  const fetchDbVideos = async () => {
+  const fetchDbVideos = useCallback(async () => {
     setLoading(true);
     try {
       const q = query(collection(db, 'media_items'), orderBy('createdAt', 'desc'));
@@ -93,34 +168,25 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchDbVideos();
-  }, []);
+  }, [fetchDbVideos]);
 
-  // 정적 데이터와 Firestore 데이터를 합치고 최신순 정렬
   useEffect(() => {
     const combined = [...dbVideos];
     
-    // 중복 방지하며 정적 미디어 데이터 병합
     staticMediaItems.forEach((staticItem) => {
       if (!combined.some(item => item.youtubeId === staticItem.youtubeId || item.id === staticItem.id)) {
         combined.push(staticItem);
       }
     });
 
-    // 날짜 기준 최신순(내림차순) 정렬
-    combined.sort((a, b) => {
-      const dateA = parseDateStr(a.date);
-      const dateB = parseDateStr(b.date);
-      return dateB - dateA;
-    });
-
+    combined.sort((a, b) => parseDateStr(b.date) - parseDateStr(a.date));
     setAllVideos(combined);
   }, [dbVideos]);
 
-  // 비디오 추가 기능
   const handleAddVideo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser || currentUser.email !== '5qud2dj11@gmail.com') {
@@ -150,7 +216,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
       await addDoc(collection(db, 'media_items'), docData);
       alert('주일 예배 영상이 영상 저장소에 정상 등록되었습니다.');
 
-      // 폼 리셋 및 닫기
       setNewTitle('');
       setNewSpeaker('');
       setNewDate('');
@@ -159,7 +224,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
       setNewScripture('');
       setShowAddModal(false);
 
-      // 영상 목록 새로고침
       await fetchDbVideos();
     } catch (error) {
       console.error("영상 업로드 실패:", error);
@@ -169,7 +233,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
     }
   };
 
-  // 검색 및 카테고리 필터링 적용된 비디오 리스트
   const filteredVideos = allVideos.filter((item) => {
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
     const cleanQuery = searchQuery.trim().toLowerCase();
@@ -185,85 +248,8 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
   const currentMediaPage = Math.min(mediaPage, totalMediaPages);
   const displayedVideos = filteredVideos.slice((currentMediaPage - 1) * mediaItemsPerPage, currentMediaPage * mediaItemsPerPage);
 
-  // 메인 피드에는 최신순 3개만 표시
   const latestThreeVideos = allVideos.slice(0, 3);
 
-  // 개별 비디오 카드 컴포넌트
-  const VideoCard = ({ item }: { item: MediaItem; key?: string }) => (
-    <div
-      key={item.id}
-      id={`media-card-${item.id}`}
-      onClick={() => setSelectedVideo(item)}
-      className="bg-white border border-[#2F3E46]/10 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transform hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 cursor-pointer group flex flex-col justify-between"
-    >
-      {/* 이미지 썸네일 & 오버레이 */}
-      <div className={`relative aspect-video w-full overflow-hidden flex items-center justify-center transition-all duration-300 ${
-        item.category === 'sermon'
-          ? 'bg-gradient-to-br from-[#38B2AC]/20 via-[#38B2AC]/10 to-[#F0FDF4]'
-          : 'bg-gradient-to-br from-[#4FD1C5]/20 via-[#4FD1C5]/10 to-[#F0FDF4]'
-      }`}>
-        <div className="absolute -top-10 -left-10 w-32 h-32 rounded-full bg-white/30 blur-xl"></div>
-        <div className="absolute -bottom-10 -right-10 w-36 h-36 rounded-full bg-[#38B2AC]/5 blur-2xl"></div>
-
-        {/* 재생 버튼 */}
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/95 text-[#38B2AC] shadow-xs flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 border border-[#BBF7D0]">
-            <Play size={16} className="ml-0.5 sm:ml-1 fill-[#38B2AC] text-[#38B2AC]" />
-          </div>
-        </div>
-
-        {/* 영상 시간 표시 */}
-        <span className="absolute bottom-2 right-2 sm:bottom-2.5 sm:right-2.5 text-[10px] sm:text-xs text-white bg-[#234E52]/85 font-mono font-medium px-2 py-0.5 rounded z-10">
-          {item.duration}
-        </span>
-
-        {/* 카테고리 태그 */}
-        <span className={`absolute top-2 left-2 sm:top-2.5 sm:left-2.5 text-[10px] sm:text-xs text-white font-semibold px-2 sm:px-2.5 py-0.5 rounded-lg ${
-          item.category === 'sermon' 
-            ? 'bg-[#38B2AC]' 
-            : 'bg-[#319795]'
-        }`}>
-          {item.category === 'sermon' ? '주일 설교' : '찬양 찬송'}
-        </span>
-      </div>
-
-      {/* 정보 영역 */}
-      <div className="p-3.5 sm:p-5 flex-1 flex flex-col justify-between space-y-2.5 sm:space-y-3">
-        <div>
-          <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-[#234E52]/60 mb-1">
-            <Calendar size={12} />
-            <span>{item.date}</span>
-          </div>
-          <h4 className="font-serif font-bold text-sm sm:text-lg text-[#234E52] leading-snug group-hover:text-[#38B2AC] transition-colors line-clamp-2">
-            {item.title}
-          </h4>
-          {item.scripture && (
-            <div className="flex items-center gap-1 text-[10px] sm:text-xs text-[#234E52] font-serif mt-1.5 sm:mt-2 bg-[#DCFCE7] px-2 py-0.5 rounded-md w-fit break-all">
-              <BookOpen size={11} className="shrink-0" />
-              <span className="line-clamp-1">{item.scripture}</span>
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-[#BBF7D0]">
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#DCFCE7] text-[#38B2AC] flex items-center justify-center shrink-0">
-              <UserIcon size={12} />
-            </div>
-            <span className="text-[10px] sm:text-xs font-semibold text-[#234E52] truncate max-w-[110px] sm:max-w-none">
-              {item.speaker}
-            </span>
-          </div>
-          <span className="text-[10px] sm:text-xs text-[#38B2AC] font-semibold flex items-center gap-0.5 group-hover:underline shrink-0">
-            영상 보기
-            <ExternalLink size={10} />
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-
-  // 메인 갤러리 피드 뷰 (최신 영상 3개 + 더보기 패널)
   const renderMainFeed = () => (
     <div className="space-y-4 sm:space-y-8 animate-fade-in">
       <div className="hidden sm:flex bg-gradient-to-r from-[#F0FDF4] via-[#DCFCE7]/70 to-[#F0FDF4] border border-[#38B2AC]/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl items-center gap-2.5 text-xs sm:text-sm text-[#234E52]">
@@ -275,11 +261,10 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
         </span>
       </div>
 
-      {/* 미디어 3열 그리드 (모바일 1열, 태블릿/데스크톱 3열) */}
       {latestThreeVideos.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6 md:gap-8">
           {latestThreeVideos.map((item) => (
-            <VideoCard key={item.id} item={item} />
+            <VideoCard key={item.id} item={item} onSelect={setSelectedVideo} />
           ))}
         </div>
       ) : (
@@ -294,7 +279,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
         </div>
       )}
 
-      {/* 더보기 패널 배너 */}
       <div 
         id="btn-go-to-storage"
         onClick={() => {
@@ -304,7 +288,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
         }}
         className="group relative bg-gradient-to-br from-[#38B2AC] via-[#319795] to-[#2C7A7B] text-white p-4 sm:p-7 md:p-9 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-md active:scale-[0.98] transform transition-all duration-300 cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-6"
       >
-        {/* 장식용 은은한 아우라 구체 */}
         <div className="absolute -right-10 -bottom-20 w-80 h-80 rounded-full bg-white/10 blur-3xl group-hover:bg-white/15 transition-colors pointer-events-none"></div>
         <div className="absolute left-1/3 -top-20 w-60 h-60 rounded-full bg-[#F0FDF4]/10 blur-2xl pointer-events-none"></div>
 
@@ -329,11 +312,8 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
     </div>
   );
 
-  // 영상 저장소 전체 뷰
   const renderStorageFeed = () => (
     <div className="space-y-6 sm:space-y-8 animate-fade-in">
-      
-      {/* 상단 액션 바 */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-[#BBF7D0] pb-4 sm:pb-5">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#DCFCE7] text-[#38B2AC] flex items-center justify-center shrink-0">
@@ -371,10 +351,7 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
         </div>
       </div>
 
-      {/* 필터 및 검색 컨트롤 영역 */}
       <div className="bg-[#FAF9F6] border border-[#2F3E46]/10 p-2.5 sm:p-5 rounded-2xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-4">
-        
-        {/* 카테고리 필터 필 */}
         <div className="flex items-center gap-1 sm:gap-1.5 w-full md:w-auto overflow-x-auto pb-0.5 md:pb-0 scrollbar-none">
           <button
             onClick={() => {
@@ -417,7 +394,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
           </button>
         </div>
 
-        {/* 검색 인풋 */}
         <div className="relative w-full md:w-72 shrink-0">
           <Search size={14} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#2F3E46]/45" />
           <input
@@ -444,11 +420,10 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
         </div>
       </div>
 
-      {/* 비디오 그리드 (모바일 1열, 태블릿 2열, 데스크톱 3열) */}
       {displayedVideos.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {displayedVideos.map((item) => (
-            <VideoCard key={item.id} item={item} />
+            <VideoCard key={item.id} item={item} onSelect={setSelectedVideo} />
           ))}
         </div>
       ) : (
@@ -458,7 +433,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
         </div>
       )}
 
-      {/* 페이지네이션 [1] [2] [3] */}
       {totalMediaPages > 1 && (
         <div className="flex items-center justify-center gap-1.5 sm:gap-2 pt-4 sm:pt-6">
           {Array.from({ length: totalMediaPages }, (_, i) => i + 1).map((pageNum) => (
@@ -489,12 +463,10 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
     <>
       {showStorage ? renderStorageFeed() : renderMainFeed()}
 
-      {/* 비디오 재생 모달 창 (Simulated Premium Media Player) */}
+      {/* 영상 모달 */}
       {selectedVideo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-2 sm:p-4 animate-fade-in">
           <div className="bg-white rounded-2xl overflow-hidden w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl relative border border-[#2F3E46]/10">
-            
-            {/* 모달 상단 헤더 */}
             <div className="flex items-center justify-between p-3.5 sm:p-5 bg-[#FAF9F6] border-b border-[#2F3E46]/10 shrink-0">
               <div className="pr-2">
                 <span className="text-[10px] sm:text-xs uppercase tracking-wider text-[#4F6D7A] font-semibold block">
@@ -513,7 +485,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
               </button>
             </div>
 
-            {/* 비디오 비주얼 플레이어 프레임 */}
             <div className="aspect-video w-full bg-slate-950 relative shrink-0">
               <iframe
                 className="w-full h-full"
@@ -525,7 +496,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
               ></iframe>
             </div>
 
-            {/* 모달 하단 상세 정보 */}
             <div className="p-4 sm:p-6 bg-[#FAF9F6] border-t border-[#2F3E46]/10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-start sm:items-center overflow-y-auto">
               <div className="space-y-1 text-xs sm:text-sm text-[#2F3E46]/70">
                 <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -549,17 +519,14 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
                 동영상 닫기
               </button>
             </div>
-
           </div>
         </div>
       )}
 
-      {/* 새 영상 등록 모달 창 */}
+      {/* 등록 모달 */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 animate-fade-in">
           <div className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden w-full max-w-lg max-h-[90vh] flex flex-col shadow-2xl relative border border-[#2F3E46]/10">
-            
-            {/* 모달 헤더 */}
             <div className="p-4 sm:p-6 bg-[#FAF9F6] border-b border-[#2F3E46]/10 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-[#4F6D7A]/10 text-[#4F6D7A] rounded-xl">
@@ -578,10 +545,7 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
               </button>
             </div>
 
-            {/* 모달 폼 본문 */}
             <form onSubmit={handleAddVideo} className="p-4 sm:p-6 space-y-3.5 sm:space-y-4 overflow-y-auto">
-              
-              {/* 카테고리 선택 */}
               <div>
                 <label className="block text-[11px] font-bold text-[#2F3E46] mb-1.5">콘텐츠 카테고리 *</label>
                 <div className="grid grid-cols-2 gap-2">
@@ -612,7 +576,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
                 </div>
               </div>
 
-              {/* 제목 */}
               <div>
                 <label className="block text-[11px] font-bold text-[#2F3E46] mb-1">동영상 제목 *</label>
                 <input
@@ -626,7 +589,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {/* 발표자 / 인도자 */}
                 <div>
                   <label className="block text-[11px] font-bold text-[#2F3E46] mb-1">발표자 / 찬양팀</label>
                   <input
@@ -637,8 +599,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
                     className="w-full p-2.5 bg-[#FAF9F6]/50 border border-[#2F3E46]/10 rounded-xl text-xs focus:ring-1 focus:ring-[#4F6D7A] focus:outline-none placeholder:text-[#2F3E46]/35"
                   />
                 </div>
-
-                {/* 영상 재생 시간 */}
                 <div>
                   <label className="block text-[11px] font-bold text-[#2F3E46] mb-1">재생 시간 (Duration) *</label>
                   <input
@@ -653,7 +613,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {/* 예배/행사 일자 */}
                 <div>
                   <label className="block text-[11px] font-bold text-[#2F3E46] mb-1">등록 날짜 *</label>
                   <input
@@ -665,8 +624,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
                     className="w-full p-2.5 bg-[#FAF9F6]/50 border border-[#2F3E46]/10 rounded-xl text-xs focus:ring-1 focus:ring-[#4F6D7A] focus:outline-none placeholder:text-[#2F3E46]/35"
                   />
                 </div>
-
-                {/* YouTube ID */}
                 <div>
                   <label className="block text-[11px] font-bold text-[#2F3E46] mb-1">유튜브 ID (Video ID) *</label>
                   <input
@@ -680,7 +637,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
                 </div>
               </div>
 
-              {/* 말씀 구절 (설교 한정) */}
               {newCategory === 'sermon' && (
                 <div>
                   <label className="block text-[11px] font-bold text-[#2F3E46] mb-1">본문 말씀 구절 (선택)</label>
@@ -694,7 +650,6 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
                 </div>
               )}
 
-              {/* 하단 버튼 */}
               <div className="pt-3 flex gap-2 justify-end">
                 <button
                   type="button"
@@ -709,11 +664,9 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
                   className="px-5 py-2 bg-[#4F6D7A] hover:bg-[#4F6D7A]/90 text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1"
                 >
                   <Plus size={12} />
-                  <span>{addLoading ? '등록 처리 중...' : '영상 등록 완료'}
-                  </span>
+                  <span>{addLoading ? '등록 처리 중...' : '영상 등록 완료'}</span>
                 </button>
               </div>
-
             </form>
           </div>
         </div>
@@ -721,4 +674,3 @@ export default function MediaGallery({ onNavClick, isPanel = false }: MediaGalle
     </>
   );
 }
-
