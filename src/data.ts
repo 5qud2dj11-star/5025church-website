@@ -47,7 +47,19 @@ export interface MediaItem {
   scripture?: string;
 }
 
-export const mediaItems: MediaItem[] = [];
+export const MEDIA_DATA: MediaItem[] = [
+  {
+    id: "20260816-sermon",
+    category: "sermon",
+    title: "원주 오병이어교회 [주일예배]",
+    speaker: "정일혁 목사",
+    date: "2026.08.16",
+    duration: "",
+    youtubeId: "oyewlV5DlhQ",
+    thumbnailUrl: "https://img.youtube.com/vi/oyewlV5DlhQ/hqdefault.jpg",
+    scripture: ""
+  }
+];
 
 // 교회 소식 / 금주 주보 데이터
 export const bulletinNews: BulletinNews[] = [];
