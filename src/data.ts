@@ -56,7 +56,7 @@ export const mediaItems: MediaItem[] = [
     speaker: "정일혁 목사",
     date: "2026.08.16",
     duration: "1:18:50",
-    youtubeId: "oyewlV5DlhQ",
+    youtubeId: "oYewlV5DlhQ",
     thumbnailUrl: "https://www.youtube.com/watch?v=oyewIV5DlhQ&t=2597s",
     scripture: "창세기 40장 9-15절"
   }
@@ -68,6 +68,22 @@ export const bulletinNews: BulletinNews[] = [];
 // 초기 오병이어 소식 & 교인 게시판 데이터
 export const initialBoardPosts: BoardPost[] = [
    {
+     id: 'bulletin-20260816',
+    title: '2026년 8월 30일 주일 주보 (제2026-37호)',
+    bulletinDate: '2026년 8월 30일 주일',
+    scripture: '룻기 3장 10절',
+    prayer: '정예영 청년',
+    userName: '오병이어교회',
+    userId: 'admin',
+    createdAt: '2026-08-30T00:00:00.000Z',
+    type: 'bulletin',
+    content: '2026년 8월 30일 주일 주보입니다.',
+  images: [
+      '/',
+      '/'
+    ],
+  },
+  {
      id: 'bulletin-20260816',
     title: '2026년 8월 23일 주일 주보 (제2026-36호)',
     bulletinDate: '2026년 8월 23일 주일',
