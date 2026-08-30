@@ -54,10 +54,10 @@ export const MEDIA_DATA: MediaItem[] = [
     title: "원주 오병이어교회 [주일예배]",
     speaker: "정일혁 목사",
     date: "2026.08.16",
-    duration: "",
+    duration: "1:18:50",
     youtubeId: "oyewlV5DlhQ",
     thumbnailUrl: "https://img.youtube.com/vi/oyewlV5DlhQ/hqdefault.jpg",
-    scripture: ""
+    scripture: "창세기 40장 9-15절"
   }
 ];
 
