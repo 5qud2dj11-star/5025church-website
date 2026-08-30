@@ -82,8 +82,8 @@ export const initialBoardPosts: BoardPost[] = [
     type: 'bulletin',
     content: '2026년 8월 16일 주일 주보입니다.',
   images: [
-      '/260816-1.jpeg',
-      '/260816-2.jpeg'
+      '/2026년 8월 16일 주보 1.pdf',
+      '/2026년 8월 16일 주보 2.pdf'
     ],
   },
   {   
