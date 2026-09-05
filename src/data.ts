@@ -75,7 +75,7 @@ export const initialBoardPosts: BoardPost[] = [
   userId: 'admin',
   createdAt: '2026-09-05T00:00:00.000Z',
   type: 'members',
-  image:[]
+  image:[],
   fileUrl: '/5025j1.pdf',   
   fileName: '5025j1.pdf'
   }, 
