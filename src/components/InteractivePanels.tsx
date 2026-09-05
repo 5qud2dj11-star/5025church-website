@@ -833,38 +833,41 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
             </div>
           )}
 
-          {/* ==================== 4. 오시는 길 (Location) ==================== */}
-          {panel === 'location' && (
-            <div className="space-y-8 animate-fade-in">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-                <div className="lg:col-span-2 space-y-4">
-                  <div className="relative rounded-2xl overflow-hidden border border-[#2F3E46]/10 shadow-xs h-[300px] sm:h-[400px] bg-[#FAF9F6]">
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3181.713210410786!2d127.9419163!3d37.3323032!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x35639149495b4cb5%3A0x2a9e3bc83d958df8!2s290%20Musil-ro%2C%20Wonju-si%2C%20Gangwon-do!5e0!3m2!1sen!2skr!4v1700000000000!5m2!1sen!2skr"
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen={false}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      title="교회 위치 지도"
-                    />
-                  </div>
-                </div>
+      {panel === 'location' && (
+  <div className="space-y-8 animate-fade-in">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+      <div className="lg:col-span-2 space-y-4">
+        <div className="relative rounded-2xl overflow-hidden border border-[#2F3E46]/10 shadow-xs h-[300px] sm:h-[400px] bg-[#FAF9F6]">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3159.2!2d127.876!3d37.365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zS29yZWEsIEdhbmd3b24tZG8sIFdvbmp1LXNpLCBqaWplb25nLW1lb24sIFNoaW5qaWplb25nLXJvLDE4NA!5e0!3m2!1sko!2skr!4v1!"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen={false}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="교회 위치 지도"
+          />
+        </div>
+      </div>
+    </div>
 
-                <div className="space-y-4 flex flex-col justify-between">
-                  <div className="bg-[#FAF9F6] p-6 rounded-2xl border border-[#2F3E46]/10 space-y-4">
-                    <h4 className="font-serif font-bold text-lg text-[#2F3E46] flex items-center gap-2">
-                      <MapPin size={18} className="text-[#0096E6]" />
-                      위치 및 연락처
-                    </h4>
-                    
-                    <div className="space-y-3 text-sm text-[#2F3E46]/80 font-light">
-                      <div>
-                        <span className="font-bold block text-[#2F3E46] text-xs uppercase tracking-wider text-[#2F3E46]/50 mb-1">도로명 주소</span>
-                        <p className="leading-relaxed">강원특별자치도 원주시 무실로 290 (명륜동)</p>
-                      </div>
-
+    <div className="space-y-4 flex flex-col justify-between">
+      <div className="bg-[#FAF9F6] p-6 rounded-2xl border border-[#2F3E46]/10 space-y-4">
+        <h4 className="font-serif font-bold text-lg text-[#2F3E46] flex items-center gap-2">
+          <MapPin size={18} className="text-[#0096E6]" />
+          위치 안내
+        </h4>
+        <div className="space-y-3 text-sm text-[#2F3E46]/80 font-light">
+          <div>
+            <span className="font-bold block text-[#2F3E46] text-xs uppercase tracking-wider text-[#2F3E46]/50 mb-1">도로명 주소</span>
+            <p className="leading-relaxed">강원특별자치도 원주시 지정면 신지정로 184, 2층</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
                       <div className="pt-2 border-t border-[#2F3E46]/10">
                         <span className="font-bold block text-[#2F3E46] text-xs uppercase tracking-wider text-[#2F3E46]/50 mb-1">문의 전화</span>
                         <p className="font-mono font-medium text-[#0096E6]">033-763-0525</p>
