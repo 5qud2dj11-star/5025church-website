@@ -11,6 +11,8 @@ export interface BoardPost {
   scripture?: string;
   prayer?: string;
   images?: string[];
+  fileUrl?: string;
+  fileName?: string;
 }
 
 export interface Registration {
