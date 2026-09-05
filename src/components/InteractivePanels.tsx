@@ -875,19 +875,6 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
     </p>
   </div>
 </div>
-
-                  <div className="bg-white p-6 rounded-2xl border border-[#2F3E46]/10 space-y-3">
-                    <h4 className="font-serif font-bold text-base text-[#2F3E46] flex items-center gap-2">
-                      <Info size={18} className="text-[#2EB096]" />
-                      주차 안내
-                    </h4>
-                    <p className="text-xs text-[#2F3E46]/80 leading-relaxed font-light">
-                      교회 내 전용 주차장 및 주말 인근 지정 주차 구역을 무료로 이용하실 수 있습니다.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
           )}
 
           {/* ==================== 5. 주보 (Bulletin) ==================== */}
