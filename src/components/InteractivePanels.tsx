@@ -839,7 +839,7 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
       <div className="lg:col-span-2 space-y-4">
         <div className="relative rounded-2xl overflow-hidden border border-[#2F3E46]/10 shadow-xs h-[300px] sm:h-[400px] bg-[#FAF9F6]">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3159.2!2d127.876!3d37.365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zS29yZWEsIEdhbmd3b24tZG8sIFdvbmp1LXNpLCBqaWplb25nLW1lb24sIFNoaW5qaWplb25nLXJvLDE4NA!5e0!3m2!1sko!2skr!4v1!"
+            src="https://maps.google.com/maps?q=강원특별자치도+원주시+지정면+신지정로+184&t=&z=17&ie=UTF8&iwloc=&output=embed"
             width="100%"
             height="100%"
             style={{ border: 0 }}
