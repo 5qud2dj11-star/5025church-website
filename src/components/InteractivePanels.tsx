@@ -838,17 +838,15 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
       <div className="lg:col-span-2 space-y-4">
         <div className="relative rounded-2xl overflow-hidden border border-[#2F3E46]/10 shadow-xs h-[300px] sm:h-[400px] bg-[#FAF9F6]">
-          <iframe
-            src="https://maps.google.com/maps?q=강원특별자치도+원주시+지정면+신지정로+184&t=&z=17&ie=UTF8&iwloc=&output=embed"
+         <iframe
+            src="https://map.naver.com/v5/entry/address/14147571.49,4511234.12,%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EB%8F%84% 원주시 지정면 신지정로 184,c,15,0,0,0,dh"
             width="100%"
             height="100%"
             style={{ border: 0 }}
             allowFullScreen={false}
             loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
             title="교회 위치 지도"
           />
-        </div>
       </div>
 
       <div className="space-y-4 flex flex-col justify-between">
