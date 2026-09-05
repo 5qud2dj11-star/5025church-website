@@ -1050,28 +1050,36 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
                                 {selectedNews.content}
                               </p>
                             </div>
-                            {/* PDF 및 이미지 첨부파일 공통 출력 영역 */}
-{selectedNews.images && selectedNews.images.length > 0 && (
-  <div className="mt-4 pt-4 border-t border-[#2F3E46]/10">
-    {selectedNews.images.map((fileUrl: string, idx: number) => (
-      fileUrl.endsWith('.pdf') ? (
-        <div key={idx} className="w-full my-2 overflow-hidden rounded-xl border border-[#2F3E46]/20 shadow-sm bg-white">
-          <iframe
-            src={`${fileUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-            className="w-full h-[600px] sm:h-[800px]"
-            title="첨부 PDF 문서"
-          />
-        </div>
-      ) : (
-        <img
-          key={idx}
-          src={fileUrl}
-          alt="첨부 이미지"
-          className="w-full max-w-xl rounded-xl my-2 border border-[#2F3E46]/10"
-        />
-      )
-    ))}
-  </div>
+{/* PDF 및 이미지 첨부파일 공통 출력 영역 */}
+    {selectedNews.images && selectedNews.images.length > 0 && (
+      <div className="mt-4 pt-4 border-t border-[#2F3E46]/10">
+        {selectedNews.images.map((fileUrl: string, idx: number) => (
+          fileUrl.endsWith('.pdf') ? (
+            <div key={idx} className="w-full my-2 overflow-hidden rounded-xl border border-[#2F3E46]/20 shadow-sm bg-white">
+              <object
+                data={fileUrl}
+                type="application/pdf"
+                className="w-full h-[600px] sm:h-[800px]"
+              >
+                <div className="p-4 text-center text-sm text-[#2F3E46]/70">
+                  <p>미리보기를 지원하지 않는 브라우저입니다.</p>
+                  <a href={fileUrl} target="_blank" rel="noreferrer" className="underline font-bold text-[#2F3E46] mt-1 inline-block">
+                    [PDF 문서 직접 열기 / 다운로드]
+                  </a>
+                </div>
+              </object>
+            </div>
+          ) : (
+            <img
+              key={idx}
+              src={fileUrl}
+              alt="첨부 이미지"
+              className="w-full max-w-xl rounded-xl my-2 border border-[#2F3E46]/10"
+            />
+          )
+        ))}
+      </div>
+    )}
 )}
                             
                             <div className="pt-4 sm:pt-6 border-t border-[#2F3E46]/10 flex justify-center">
