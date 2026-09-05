@@ -875,7 +875,7 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
     </p>
   </div>
 </div>
-          )}
+          )
 
           {/* ==================== 5. 주보 (Bulletin) ==================== */}
           {panel === 'bulletin' && (
