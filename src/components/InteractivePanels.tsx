@@ -1139,7 +1139,7 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
                             </div>
                           ) : (
                             <div className="space-y-3 sm:space-y-4">
-                              {displayedNews.map((post, index) => (
+                              {[...displayedNews].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((post, index) => (
                                 <div
                                   key={post.id || index}
                                   onClick={() => setSelectedNews(post)}
