@@ -851,29 +851,30 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
         </div>
       </div>
     </div>
-
-    <div className="space-y-4 flex flex-col justify-between">
-      <div className="bg-[#FAF9F6] p-6 rounded-2xl border border-[#2F3E46]/10 space-y-4">
-        <h4 className="font-serif font-bold text-lg text-[#2F3E46] flex items-center gap-2">
-          <MapPin size={18} className="text-[#0096E6]" />
-          위치 안내
-        </h4>
-        <div className="space-y-3 text-sm text-[#2F3E46]/80 font-light">
-          <div>
-            <span className="font-bold block text-[#2F3E46] text-xs uppercase tracking-wider text-[#2F3E46]/50 mb-1">도로명 주소</span>
-            <p className="leading-relaxed">강원특별자치도 원주시 지정면 신지정로 184, 2층</p>
-          </div>
-        </div>
+<div className="space-y-4 flex flex-col justify-between">
+  <div className="bg-[#FAF9F6] p-6 rounded-2xl border border-[#2F3E46]/10 space-y-4">
+    <h4 className="font-serif font-bold text-lg text-[#2F3E46] flex items-center gap-2">
+      <MapPin size={18} className="text-[#0096E6]" />
+      위치 안내
+    </h4>
+    <div className="space-y-3 text-sm text-[#2F3E46]/80 font-light">
+      <div>
+        <span className="font-bold block text-[#2F3E46] text-xs uppercase tracking-wider text-[#2F3E46]/50 mb-1">도로명 주소</span>
+        <p className="leading-relaxed">강원특별자치도 원주시 지정면 신지정로 184, 2층</p>
       </div>
     </div>
   </div>
-)}
-                      <div className="pt-2 border-t border-[#2F3E46]/10">
-                        <span className="font-bold block text-[#2F3E46] text-xs uppercase tracking-wider text-[#2F3E46]/50 mb-1">문의 전화</span>
-                        <p className="font-mono font-medium text-[#0096E6]">033-763-0525</p>
-                      </div>
-                    </div>
-                  </div>
+
+  <div className="bg-white p-6 rounded-2xl border border-[#2F3E46]/10 space-y-3">
+    <h4 className="font-serif font-bold text-base text-[#2F3E46] flex items-center gap-2">
+      <Info size={18} className="text-[#2EB096]" />
+      주차 안내
+    </h4>
+    <p className="text-xs text-[#2F3E46]/80 leading-relaxed font-light">
+      교회 내 전용 주차장 및 주말 인근 지정 주차 구역을 무료로 이용하실 수 있습니다.
+    </p>
+  </div>
+</div>
 
                   <div className="bg-white p-6 rounded-2xl border border-[#2F3E46]/10 space-y-3">
                     <h4 className="font-serif font-bold text-base text-[#2F3E46] flex items-center gap-2">
