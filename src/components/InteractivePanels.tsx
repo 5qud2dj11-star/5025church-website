@@ -1477,7 +1477,7 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
                         </h4>
                         <p className="text-xs text-[#2F3E46]/70 mt-1">
                           오병이어교회 성도님들을 위한 전용 공간입니다.<br />
-                          교회 비밀번호를 입력해 주세요. (기본 비밀번호: 0801)
+                          교회 비밀번호를 입력해 주세요.
                         </p>
                       </div>
 
