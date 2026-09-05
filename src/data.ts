@@ -75,7 +75,7 @@ export const initialBoardPosts: BoardPost[] = [
   userId: 'admin',
   createdAt: '2026-09-05T17:50:00.000Z',
   type: 'members',
-  images: '/5025j1.pdf'
+  images: ['/5025j1.pdf']
   }, 
   {
      id: 'bulletin-20260816',
