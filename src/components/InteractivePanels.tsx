@@ -1078,9 +1078,8 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
             />
           )
         ))}
-      </div>
-    )}
-)}
+    
+
                             
                             <div className="pt-4 sm:pt-6 border-t border-[#2F3E46]/10 flex justify-center">
                               <button
