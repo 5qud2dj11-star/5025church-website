@@ -67,7 +67,17 @@ export const bulletinNews: BulletinNews[] = [];
 
 // 초기 오병이어 소식 & 교인 게시판 데이터
 export const initialBoardPosts: BoardPost[] = [
-   {
+  {
+  id: 'members-20260905-finance',
+  title: '[회계보고] 2026년 상반기 재정 결산 보고',
+  content: '2026년 상반기 재정 및 회계 결산 보고서입니다. 첨부된 파일(5025j1.pdf)을 확인해 주세요.',
+  userName: '오병이어교회',
+  userId: 'admin',
+  createdAt: '2026-09-05T17:50:00.000Z',
+  type: 'members',
+  images: ['/5025j1.pdf']
+  }, 
+  {
      id: 'bulletin-20260816',
     title: '2026년 8월 30일 주일 주보 (제2026-37호)',
     bulletinDate: '2026년 8월 30일 주일',
