@@ -867,6 +867,34 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
                 <div>
                   {!selectedNews ? (
                     <div className="space-y-4">
+                      {/* 검색 및 필터 */}
+                      <div className="flex flex-col sm:flex-row gap-3 justify-between items-center mb-4">
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <span className="text-xs font-bold text-[#2F3E46]">연도별:</span>
+                          <select
+                            value={selectedNewsYear}
+                            onChange={(e) => { setSelectedNewsYear(e.target.value); setNewsPage(1); }}
+                            className="px-3 py-1.5 text-xs bg-white border border-[#2F3E46]/20 rounded-lg"
+                          >
+                            <option value="All">전체 연도</option>
+                            {newsYears.map((yr) => (
+                              <option key={yr} value={yr.toString()}>{yr}년</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="relative w-full sm:w-64">
+                          <input
+                            type="text"
+                            placeholder="소식 검색..."
+                            value={newsSearchQuery}
+                            onChange={(e) => { setNewsSearchQuery(e.target.value); setNewsPage(1); }}
+                            className="w-full pl-9 pr-4 py-2 text-xs bg-white border border-[#2F3E46]/20 rounded-xl"
+                          />
+                          <Search size={14} className="absolute left-3 top-2.5 text-[#2F3E46]/40" />
+                        </div>
+                      </div>
+
+                      {/* 소식 목록 */}
                       <div className="grid grid-cols-1 gap-3">
                         {displayedNews.map((post) => (
                           <div
@@ -882,11 +910,36 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
                           </div>
                         ))}
                       </div>
+
+                      {/* 소식 페이지네이션 */}
+                      {totalNewsPages > 1 && (
+                        <div className="flex items-center justify-center gap-2 pt-4">
+                          <button
+                            onClick={() => setNewsPage(p => Math.max(1, p - 1))}
+                            disabled={currentNewsPage === 1}
+                            className="p-2 border border-[#2F3E46]/20 rounded-lg disabled:opacity-30 cursor-pointer"
+                          >
+                            <ChevronLeft size={16} />
+                          </button>
+                          <span className="text-xs font-medium text-[#2F3E46] px-3">{currentNewsPage} / {totalNewsPages}</span>
+                          <button
+                            onClick={() => setNewsPage(p => Math.min(totalNewsPages, p + 1))}
+                            disabled={currentNewsPage === totalNewsPages}
+                            className="p-2 border border-[#2F3E46]/20 rounded-lg disabled:opacity-30 cursor-pointer"
+                          >
+                            <ChevronRight size={16} />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ) : (
+                    /* 소식 상세 보기 */
                     <div className="bg-white p-6 rounded-2xl border border-[#2F3E46]/10 space-y-4">
                       <div className="flex justify-between items-start border-b border-[#2F3E46]/10 pb-4">
-                        <h3 className="text-xl font-bold text-[#2F3E46]">{selectedNews.title}</h3>
+                        <div>
+                          <h3 className="text-xl font-bold text-[#2F3E46]">{selectedNews.title}</h3>
+                          <p className="text-xs text-[#2F3E46]/60 mt-1">{selectedNews.createdAt ? new Date(selectedNews.createdAt).toLocaleDateString() : ''}</p>
+                        </div>
                         <button onClick={() => setSelectedNews(null)} className="px-4 py-2 text-xs font-bold bg-[#FAF9F6] border border-[#2F3E46]/20 rounded-xl cursor-pointer">
                           목록으로
                         </button>
@@ -906,6 +959,7 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
                     <div className="p-8 text-center bg-[#FAF9F6] rounded-2xl border border-[#2F3E46]/10 space-y-4 max-w-md mx-auto my-6">
                       <Lock size={32} className="mx-auto text-[#2F3E46]/60" />
                       <h4 className="font-bold text-[#2F3E46] text-lg">교인 전용 인증</h4>
+                      <p className="text-xs text-[#2F3E46]/70">교인 전용 암호를 입력해주세요.</p>
                       <form onSubmit={handlePasswordSubmit} className="space-y-3">
                         <input
                           type="password"
@@ -927,26 +981,124 @@ export default function InteractivePanels({ panel, onClose }: InteractivePanelsP
                     </div>
                   ) : (
                     <div>
-                      {!selectedMembers ? (
-                        <div className="grid grid-cols-1 gap-3">
-                          {displayedMembers.map((post) => (
-                            <div
-                              key={post.id}
-                              onClick={() => { setSelectedMembers(post); scrollToBoardTop(); }}
-                              className="p-4 bg-white rounded-xl border border-[#2F3E46]/10 hover:border-[#2F3E46]/30 cursor-pointer flex justify-between items-center"
+                      {/* 관리자 쓰기 폼 (교인전용) */}
+                      {user && user.email === '5qud2dj11@gmail.com' && (
+                        <div className="p-5 bg-[#FAF9F6] rounded-2xl border border-[#2F3E46]/20 mb-6 space-y-3">
+                          <div className="flex items-center gap-2 border-b border-[#2F3E46]/10 pb-2">
+                            <PenTool size={18} className="text-[#2F3E46]" />
+                            <h4 className="font-bold text-[#2F3E46] text-base">관리자 교인전용 소식 작성</h4>
+                          </div>
+                          <form onSubmit={handlePostSubmit} className="space-y-3">
+                            <input
+                              type="text"
+                              placeholder="제목을 입력하세요"
+                              value={postTitle}
+                              onChange={(e) => setPostTitle(e.target.value)}
+                              className="w-full px-3.5 py-2 text-sm bg-white border border-[#2F3E46]/15 rounded-xl focus:outline-none"
+                              required
+                            />
+                            <textarea
+                              placeholder="내용을 입력하세요..."
+                              value={postContent}
+                              onChange={(e) => setPostContent(e.target.value)}
+                              rows={4}
+                              className="w-full px-3.5 py-2 text-sm bg-white border border-[#2F3E46]/15 rounded-xl focus:outline-none resize-none"
+                              required
+                            />
+                            <button
+                              type="submit"
+                              disabled={postLoading}
+                              className="w-full py-2.5 bg-[#2F3E46] text-white text-sm font-bold rounded-xl hover:bg-[#3A4D56] cursor-pointer"
                             >
-                              <div>
-                                <h4 className="font-bold text-[#2F3E46] text-sm">{post.title}</h4>
-                                <p className="text-xs text-[#2F3E46]/60 mt-1">{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : ''}</p>
-                              </div>
-                              <ChevronRight size={18} className="text-[#2F3E46]/40" />
+                              {postLoading ? '등록 중...' : '등록하기'}
+                            </button>
+                          </form>
+                        </div>
+                      )}
+
+                      {!selectedMembers ? (
+                        <div className="space-y-4">
+                          {/* 검색 및 필터 */}
+                          <div className="flex flex-col sm:flex-row gap-3 justify-between items-center mb-4">
+                            <div className="flex items-center gap-2 w-full sm:w-auto">
+                              <span className="text-xs font-bold text-[#2F3E46]">연도별:</span>
+                              <select
+                                value={selectedMembersYear}
+                                onChange={(e) => { setSelectedMembersYear(e.target.value); setMembersPage(1); }}
+                                className="px-3 py-1.5 text-xs bg-white border border-[#2F3E46]/20 rounded-lg"
+                              >
+                                <option value="All">전체 연도</option>
+                                {membersYears.map((yr) => (
+                                  <option key={yr} value={yr.toString()}>{yr}년</option>
+                                ))}
+                              </select>
                             </div>
-                          ))}
+                            <div className="relative w-full sm:w-64">
+                              <input
+                                type="text"
+                                placeholder="교인게시판 검색..."
+                                value={membersSearchQuery}
+                                onChange={(e) => { setMembersSearchQuery(e.target.value); setMembersPage(1); }}
+                                className="w-full pl-9 pr-4 py-2 text-xs bg-white border border-[#2F3E46]/20 rounded-xl"
+                              />
+                              <Search size={14} className="absolute left-3 top-2.5 text-[#2F3E46]/40" />
+                            </div>
+                          </div>
+
+                          {/* 목록 */}
+                          <div className="grid grid-cols-1 gap-3">
+                            {displayedMembers.map((post) => (
+                              <div
+                                key={post.id}
+                                onClick={() => { setSelectedMembers(post); scrollToBoardTop(); }}
+                                className="p-4 bg-white rounded-xl border border-[#2F3E46]/10 hover:border-[#2F3E46]/30 cursor-pointer flex justify-between items-center"
+                              >
+                                <div>
+                                  <h4 className="font-bold text-[#2F3E46] text-sm">{post.title}</h4>
+                                  <p className="text-xs text-[#2F3E46]/60 mt-1">{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : ''}</p>
+                                </div>
+                                {user && user.email === '5qud2dj11@gmail.com' && (
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); handlePostDelete(post.id); }}
+                                    className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg mr-2"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                )}
+                                <ChevronRight size={18} className="text-[#2F3E46]/40" />
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* 페이지네이션 */}
+                          {totalMembersPages > 1 && (
+                            <div className="flex items-center justify-center gap-2 pt-4">
+                              <button
+                                onClick={() => setMembersPage(p => Math.max(1, p - 1))}
+                                disabled={currentMembersPage === 1}
+                                className="p-2 border border-[#2F3E46]/20 rounded-lg disabled:opacity-30 cursor-pointer"
+                              >
+                                <ChevronLeft size={16} />
+                              </button>
+                              <span className="text-xs font-medium text-[#2F3E46] px-3">{currentMembersPage} / {totalMembersPages}</span>
+                              <button
+                                onClick={() => setMembersPage(p => Math.min(totalMembersPages, p + 1))}
+                                disabled={currentMembersPage === totalMembersPages}
+                                className="p-2 border border-[#2F3E46]/20 rounded-lg disabled:opacity-30 cursor-pointer"
+                              >
+                                <ChevronRight size={16} />
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ) : (
+                        /* 상세 보기 */
                         <div className="bg-white p-6 rounded-2xl border border-[#2F3E46]/10 space-y-4">
                           <div className="flex justify-between items-start border-b border-[#2F3E46]/10 pb-4">
-                            <h3 className="text-xl font-bold text-[#2F3E46]">{selectedMembers.title}</h3>
+                            <div>
+                              <h3 className="text-xl font-bold text-[#2F3E46]">{selectedMembers.title}</h3>
+                              <p className="text-xs text-[#2F3E46]/60 mt-1">{selectedMembers.createdAt ? new Date(selectedMembers.createdAt).toLocaleDateString() : ''}</p>
+                            </div>
                             <button onClick={() => setSelectedMembers(null)} className="px-4 py-2 text-xs font-bold bg-[#FAF9F6] border border-[#2F3E46]/20 rounded-xl cursor-pointer">
                               목록으로
                             </button>
