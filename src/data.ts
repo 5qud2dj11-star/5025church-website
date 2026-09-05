@@ -73,7 +73,7 @@ export const initialBoardPosts: BoardPost[] = [
   content: '2026년 상반기 재정 및 회계 결산 보고서입니다.',
   userName: '오병이어교회',
   userId: 'admin',
-  createdAt: '2026-09-05T17:50:00.000Z',
+  createdAt: '2026-09-05T00:00:00.000Z',
   type: 'members',
   images: ['/5025j1.pdf']
   }, 
